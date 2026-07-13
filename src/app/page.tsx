@@ -19,8 +19,8 @@ export default function HomePage() {
         </div>
         <div className="relative mx-auto max-w-7xl px-4 pb-20 pt-14 md:px-6 md:pb-24 md:pt-20">
           <div className="animate-rise mx-auto max-w-3xl text-center">
-            <div className="mx-auto inline-flex rounded-2xl bg-white px-5 py-4 shadow-[0_20px_50px_rgba(16,36,56,0.35)] sm:px-8 sm:py-5">
-              <Logo size="hero" withTagline />
+            <div className="mx-auto inline-flex max-w-full rounded-2xl bg-white px-4 py-3 shadow-[0_20px_50px_rgba(16,36,56,0.35)] sm:px-8 sm:py-5">
+              <Logo size="hero" />
             </div>
             <h1 className="sr-only">Snapperhouse — Your Site, Your Store</h1>
             <p className="animate-rise-delay mx-auto mt-8 max-w-xl text-base leading-relaxed text-white/80 sm:text-lg">

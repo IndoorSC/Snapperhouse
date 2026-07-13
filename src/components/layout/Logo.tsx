@@ -1,24 +1,25 @@
 import Image from "next/image";
 import Link from "next/link";
 
+/** Intrinsic size of public/images/logo.png — do not alter the asset */
+const INTRINSIC = { width: 1774, height: 887 } as const;
+
 const sizes = {
-  sm: { width: 150, height: 38 },
-  md: { width: 190, height: 48 },
-  lg: { width: 280, height: 70 },
-  hero: { width: 520, height: 130 },
+  sm: { height: 36 },
+  md: { height: 48 },
+  lg: { height: 72 },
+  hero: { height: 140 },
 } as const;
 
 export function Logo({
-  tone = "navy",
   size = "md",
-  withTagline = false,
 }: {
   tone?: "navy" | "light";
   size?: keyof typeof sizes;
   withTagline?: boolean;
 }) {
-  const dim = sizes[size];
-  const src = tone === "light" ? "/images/logo-light.svg" : "/images/logo.png";
+  const height = sizes[size].height;
+  const width = Math.round((height * INTRINSIC.width) / INTRINSIC.height);
 
   return (
     <Link
@@ -27,14 +28,14 @@ export function Logo({
       aria-label="Snapperhouse home"
     >
       <Image
-        src={src}
+        src="/images/logo.png"
         alt="Snapperhouse — Your Site, Your Store"
-        width={dim.width}
-        height={dim.height}
-        className={`h-auto w-auto object-contain ${
-          withTagline || size === "hero" ? "" : "max-h-10 md:max-h-12"
-        }`}
-        priority={size === "md" || size === "hero"}
+        width={width}
+        height={height}
+        className="h-auto w-auto max-w-full object-contain"
+        style={{ height, width: "auto" }}
+        priority
+        unoptimized
       />
     </Link>
   );
