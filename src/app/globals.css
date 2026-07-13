@@ -1,0 +1,166 @@
+@import "tailwindcss";
+
+:root {
+  --navy: #1b3a5c;
+  --navy-deep: #102438;
+  --navy-mid: #244a70;
+  --orange: #f47b20;
+  --orange-hot: #ff8f3a;
+  --orange-deep: #d96510;
+  --water: #2a6f8f;
+  --water-light: #3d8fad;
+  --sand: #e8eef3;
+  --foam: #f5f8fb;
+  --ink: #142433;
+  --muted: #5a6f82;
+  --line: rgba(27, 58, 92, 0.12);
+  --success: #2f7d4a;
+  --warning: #b45309;
+  --danger: #b42318;
+  --background: var(--foam);
+  --foreground: var(--ink);
+  --radius: 12px;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-navy: var(--navy);
+  --color-navy-deep: var(--navy-deep);
+  --color-navy-mid: var(--navy-mid);
+  --color-orange: var(--orange);
+  --color-orange-hot: var(--orange-hot);
+  --color-orange-deep: var(--orange-deep);
+  --color-water: var(--water);
+  --color-water-light: var(--water-light);
+  --color-sand: var(--sand);
+  --color-foam: var(--foam);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --font-sans: var(--font-figtree);
+  --font-display: var(--font-bricolage);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-figtree), system-ui, sans-serif;
+  min-height: 100vh;
+}
+
+h1,
+h2,
+h3,
+.font-display {
+  font-family: var(--font-bricolage), var(--font-figtree), system-ui, sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--orange) 35%, white);
+  color: var(--navy-deep);
+}
+
+.water-bg {
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 20%, rgba(61, 143, 173, 0.35), transparent 55%),
+    radial-gradient(ellipse 70% 50% at 85% 10%, rgba(244, 123, 32, 0.18), transparent 50%),
+    radial-gradient(ellipse 90% 70% at 50% 100%, rgba(16, 36, 56, 0.55), transparent 60%),
+    linear-gradient(165deg, #102438 0%, #1b3a5c 42%, #244a70 72%, #2a6f8f 100%);
+}
+
+.ripple {
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.06) 0 1px, transparent 2px),
+    radial-gradient(circle at 70% 60%, rgba(255, 255, 255, 0.05) 0 1px, transparent 2px),
+    radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.04) 0 1px, transparent 2px);
+  background-size: 48px 48px, 72px 72px, 56px 56px;
+}
+
+.surface-panel {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(245, 248, 251, 0.96)),
+    var(--foam);
+  border-bottom: 1px solid var(--line);
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float-soft {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes swim {
+  0%,
+  100% {
+    transform: translateX(0) rotate(-2deg);
+  }
+  50% {
+    transform: translateX(10px) rotate(2deg);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+.animate-rise {
+  animation: rise-in 0.7s ease-out both;
+}
+
+.animate-rise-delay {
+  animation: rise-in 0.8s ease-out 0.15s both;
+}
+
+.animate-rise-delay-2 {
+  animation: rise-in 0.85s ease-out 0.28s both;
+}
+
+.animate-float {
+  animation: float-soft 5s ease-in-out infinite;
+}
+
+.animate-swim {
+  animation: swim 7s ease-in-out infinite;
+}
+
+.focus-ring:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 2px;
+}
