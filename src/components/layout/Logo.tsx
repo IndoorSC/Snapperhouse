@@ -5,18 +5,20 @@ import Link from "next/link";
 const INTRINSIC = { width: 1774, height: 887 } as const;
 
 const sizes = {
-  sm: { height: 36 },
-  md: { height: 48 },
-  lg: { height: 72 },
-  hero: { height: 140 },
+  sm: { height: 44 },
+  md: { height: 64 },
+  lg: { height: 96 },
+  hero: { height: 240 },
 } as const;
 
 export function Logo({
   size = "md",
+  className = "",
 }: {
   tone?: "navy" | "light";
   size?: keyof typeof sizes;
   withTagline?: boolean;
+  className?: string;
 }) {
   const height = sizes[size].height;
   const width = Math.round((height * INTRINSIC.width) / INTRINSIC.height);
@@ -24,7 +26,7 @@ export function Logo({
   return (
     <Link
       href="/"
-      className="group inline-flex shrink-0 items-center rounded-lg focus-ring"
+      className={`group inline-flex shrink-0 items-center focus-ring ${className}`}
       aria-label="Snapperhouse home"
     >
       <Image
@@ -32,8 +34,8 @@ export function Logo({
         alt="Snapperhouse — Your Site, Your Store"
         width={width}
         height={height}
-        className="h-auto w-auto max-w-full object-contain"
-        style={{ height, width: "auto" }}
+        className="h-auto w-full max-w-full object-contain"
+        style={{ maxHeight: height }}
         priority
         unoptimized
       />

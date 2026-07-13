@@ -36,10 +36,8 @@ export function Footer() {
     <footer className="mt-auto border-t border-[color:var(--line)] bg-navy-deep text-white">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 md:grid-cols-[1.2fr_repeat(3,1fr)] md:px-6">
         <div>
-          <div className="inline-flex rounded-xl bg-white px-3 py-2">
-            <Logo size="md" />
-          </div>
-          <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/70">
+          <Logo size="md" />
+          <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/80">
             Australia&apos;s aquarium hobbyist marketplace. Your site, your store —
             species-driven listings, reputation, and community events.
           </p>

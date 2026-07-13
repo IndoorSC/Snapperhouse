@@ -30,9 +30,9 @@ export function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[color:var(--line)] bg-[color:color-mix(in_srgb,var(--foam)_88%,white)] backdrop-blur-md">
-      <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3 md:px-6">
-        <Logo />
+    <header className="sticky top-0 z-50 border-b border-[color:var(--line)] bg-white/95 backdrop-blur-md">
+      <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-2.5 md:px-6">
+        <Logo size="md" />
 
         <form
           onSubmit={onSearch}
