@@ -59,6 +59,7 @@ export function filterListings(params: {
   listingType?: string;
   state?: string;
   category?: string;
+  seller?: string;
 }) {
   let results = params.q ? searchEnriched(params.q) : getEnrichedListings();
 
@@ -80,6 +81,12 @@ export function filterListings(params: {
   }
   if (params.state) {
     results = results.filter((l) => l.locationState === params.state);
+  }
+  if (params.seller) {
+    const slug = params.seller.toLowerCase().replace(/_/g, "-");
+    results = results.filter(
+      (l) => l.sellerUsername.toLowerCase().replace(/_/g, "-") === slug,
+    );
   }
   return results;
 }

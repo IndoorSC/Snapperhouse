@@ -13,7 +13,8 @@ type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
 export const metadata = {
   title: "Browse",
-  description: "Browse active aquarium livestock, plants and equipment listings across Australia.",
+  description:
+    "Browse active aquarium livestock, plants and equipment listings across Australia. Filter by seller for shareable storefront pages.",
 };
 
 export default async function BrowsePage({ searchParams }: { searchParams: SearchParams }) {
@@ -142,8 +143,8 @@ function BrowseShell({
         title={titles[category] ?? "Browse"}
         description={
           count != null
-            ? `${count} active listing${count === 1 ? "" : "s"}`
-            : "Free equipment listings help exiting hobbyists — livestock uses credits."
+            ? `${count} active listing${count === 1 ? "" : "s"} · Filter by seller for a shareable page like /browse/maya-aquatics`
+            : "Filter by seller for a shareable storefront — livestock uses credits."
         }
       />
       <div className="grid gap-8 lg:grid-cols-[260px_1fr]">

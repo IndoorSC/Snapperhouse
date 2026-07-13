@@ -1,19 +1,41 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
+import { sellers } from "@/lib/data/sellers";
 import { taxonomyGroups } from "@/lib/data/taxonomy";
 
 const states = ["ACT", "NSW", "NT", "QLD", "SA", "TAS", "VIC", "WA"] as const;
 
-export function BrowseFilters() {
+type Props = {
+  activeSeller?: string;
+};
+
+export function BrowseFilters({ activeSeller }: Props = {}) {
   const router = useRouter();
   const params = useSearchParams();
+
+  const basePath = activeSeller ? `/browse/${activeSeller}` : "/browse";
+  const sellerOptions = sellers.filter((s) => s.isSeller);
+
+  function pushWithParams(next: URLSearchParams, path = basePath) {
+    const query = next.toString();
+    router.push(query ? `${path}?${query}` : path);
+  }
 
   function update(key: string, value: string) {
     const next = new URLSearchParams(params.toString());
     if (!value || value === "any") next.delete(key);
     else next.set(key, value);
-    router.push(`/browse?${next.toString()}`);
+    pushWithParams(next);
+  }
+
+  function onSellerChange(value: string) {
+    const next = new URLSearchParams(params.toString());
+    if (!value) {
+      pushWithParams(next, "/browse");
+      return;
+    }
+    pushWithParams(next, `/browse/${value}`);
   }
 
   const fishGroups = taxonomyGroups.filter((g) => g.section === "fish");
@@ -21,6 +43,29 @@ export function BrowseFilters() {
   return (
     <aside className="space-y-5 rounded-2xl bg-white p-5 lg:sticky lg:top-24">
       <h2 className="font-display text-lg font-bold text-navy">Filters</h2>
+
+      <label className="block text-sm">
+        <span className="mb-1.5 block font-semibold text-navy">Seller</span>
+        <select
+          className="h-10 w-full rounded-lg border border-[color:var(--line)] bg-foam px-3 focus-ring"
+          value={activeSeller ?? ""}
+          onChange={(e) => onSellerChange(e.target.value)}
+          aria-label="Filter by seller"
+        >
+          <option value="">All sellers</option>
+          {sellerOptions.map((seller) => (
+            <option key={seller.id} value={seller.username}>
+              {seller.displayName}
+            </option>
+          ))}
+        </select>
+        {activeSeller ? (
+          <p className="mt-2 text-xs text-muted">
+            Shareable page:{" "}
+            <span className="font-semibold text-navy">/browse/{activeSeller}</span>
+          </p>
+        ) : null}
+      </label>
 
       <label className="block text-sm">
         <span className="mb-1.5 block font-semibold text-navy">Category</span>

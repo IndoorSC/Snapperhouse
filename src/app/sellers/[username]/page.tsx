@@ -5,6 +5,7 @@ import { getListingsBySeller } from "@/lib/data/listings";
 import { getSeller, getSellerRatings, sellers } from "@/lib/data/sellers";
 import { formatMemberSince } from "@/lib/utils";
 import { Star } from "lucide-react";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 type Params = Promise<{ username: string }>;
@@ -47,6 +48,15 @@ export default async function SellerProfilePage({ params }: { params: Params }) 
               {seller.suburb}, {seller.state} · Member since {formatMemberSince(seller.memberSince)}
             </p>
             {seller.bio ? <p className="mt-4 max-w-2xl text-ink/80">{seller.bio}</p> : null}
+            <p className="mt-4 text-sm text-muted">
+              Shareable browse page:{" "}
+              <Link
+                href={`/browse/${seller.username}`}
+                className="font-semibold text-navy hover:text-orange"
+              >
+                /browse/{seller.username}
+              </Link>
+            </p>
           </div>
           <div className="rounded-2xl bg-sand px-5 py-4 text-center">
             <div className="flex items-center justify-center gap-1 font-display text-3xl font-extrabold text-navy">
