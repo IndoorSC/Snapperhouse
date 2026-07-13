@@ -6,56 +6,82 @@ import { useMemo, useState } from "react";
 
 const steps = ["Species", "Details", "Extras", "Publish"] as const;
 
+function needsLocality(groupId?: string, commonName?: string) {
+  if (!groupId) return false;
+  if (groupId === "g-rainbowfish" || groupId === "g-aus-natives") return true;
+  const name = (commonName ?? "").toLowerCase();
+  return name.includes("rainbow") || name.includes("blue-eye") || name.includes("blue eye");
+}
+
 export default function NewListingPage() {
   const [step, setStep] = useState(0);
   const [speciesId, setSpeciesId] = useState("");
   const [speciesQuery, setSpeciesQuery] = useState("");
-  const [groupFilter, setGroupFilter] = useState("all");
+  const [groupFilter, setGroupFilter] = useState("");
   const [listingType, setListingType] = useState<"for_sale" | "rehoming">("for_sale");
   const [localAck, setLocalAck] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [price, setPrice] = useState(10);
   const [description, setDescription] = useState("");
+  const [locality, setLocality] = useState("");
   const [optional, setOptional] = useState({
     gh: "",
     kh: "",
     diet: "",
     tank: "",
     compatibility: "",
-    strain: "",
     breeding: "",
   });
 
   const selected = species.find((s) => s.id === speciesId);
+  const localityRequired = needsLocality(selected?.groupId, selected?.commonName);
+
   const filteredSpecies = useMemo(() => {
+    // Don't dump the full catalogue — require search or group so nothing looks pre-picked
+    if (!speciesQuery.trim() && !groupFilter) return [];
     let results = searchSpeciesCatalogue(speciesQuery);
-    if (groupFilter !== "all") {
+    if (groupFilter) {
       results = results.filter((s) => s.groupId === groupFilter);
     }
-    return results;
+    return results.slice(0, 100);
   }, [speciesQuery, groupFilter]);
 
   const completeness = useMemo(() => {
     let score = 40;
+    if (locality.trim()) score += 10;
     if (optional.gh) score += 5;
     if (optional.kh) score += 5;
     if (optional.diet) score += 10;
     if (optional.tank) score += 10;
     if (optional.compatibility) score += 10;
-    if (optional.strain) score += 10;
     if (optional.breeding) score += 10;
     return Math.min(score, 100);
-  }, [optional]);
+  }, [optional, locality]);
 
   const canProceedSpecies =
     !!selected &&
     selected.tradeStatus !== "prohibited" &&
     (selected.tradeStatus !== "local_only" || localAck);
 
+  const canProceedDetails =
+    quantity >= 1 &&
+    price >= 0 &&
+    description.trim().length > 0 &&
+    (!localityRequired || locality.trim().length > 0);
+
+  const listingTitle = selected
+    ? locality.trim()
+      ? `${selected.commonName} — ${locality.trim()}`
+      : selected.commonName
+    : "";
+
   return (
     <div className="mx-auto max-w-3xl px-4 py-10 md:px-6">
       <h1 className="font-display text-3xl font-extrabold text-navy">Create listing</h1>
-      <p className="mt-2 text-muted">Fish & livestock — 1 credit on publish. Equipment is free.</p>
+      <p className="mt-2 text-muted">
+        Fish & livestock — 1 credit on publish. For rainbowfish and blue-eyes, choose the
+        locality / river form that matches what you are selling.
+      </p>
 
       <div className="mt-6 flex gap-2">
         {steps.map((label, i) => (
@@ -73,29 +99,42 @@ export default function NewListingPage() {
       <div className="mt-6 rounded-[1.5rem] bg-white p-6">
         {step === 0 && (
           <div className="space-y-4">
-            <div className="flex items-center justify-between gap-3">
-              <p className="text-sm font-semibold text-navy">
-                Species catalogue · {species.filter((s) => s.approved).length} ready to list
-              </p>
-            </div>
+            <p className="text-sm font-semibold text-navy">
+              Species catalogue · {species.filter((s) => s.approved).length} ready to list
+            </p>
+            <p className="text-sm text-muted">
+              Search or pick a group first — nothing is selected until you tap a species.
+            </p>
+
             <label className="block text-sm">
               <span className="mb-1.5 block font-semibold text-navy">Search species</span>
               <input
                 type="search"
                 value={speciesQuery}
-                onChange={(e) => setSpeciesQuery(e.target.value)}
-                placeholder="Type a common or scientific name — e.g. cory, neon, Apistogramma"
+                onChange={(e) => {
+                  setSpeciesQuery(e.target.value);
+                  setSpeciesId("");
+                  setLocalAck(false);
+                  setLocality("");
+                }}
+                placeholder="e.g. rainbow, blue-eye, Goyder, trifasciata, neon"
                 className="h-11 w-full rounded-lg border border-[color:var(--line)] bg-foam px-3 focus-ring"
               />
             </label>
+
             <label className="block text-sm">
-              <span className="mb-1.5 block font-semibold text-navy">Or browse by group</span>
+              <span className="mb-1.5 block font-semibold text-navy">Browse by group</span>
               <select
                 className="h-11 w-full rounded-lg border border-[color:var(--line)] bg-foam px-3 focus-ring"
                 value={groupFilter}
-                onChange={(e) => setGroupFilter(e.target.value)}
+                onChange={(e) => {
+                  setGroupFilter(e.target.value);
+                  setSpeciesId("");
+                  setLocalAck(false);
+                  setLocality("");
+                }}
               >
-                <option value="all">All groups</option>
+                <option value="">Choose a group…</option>
                 {taxonomyGroups
                   .filter((g) => g.section === "fish" || g.section === "plants")
                   .map((g) => (
@@ -105,46 +144,75 @@ export default function NewListingPage() {
                   ))}
               </select>
             </label>
-            <div className="max-h-72 overflow-auto rounded-xl border border-[color:var(--line)] bg-foam">
-              {filteredSpecies.length === 0 ? (
-                <p className="p-4 text-sm text-muted">No species match that search. Try another name.</p>
-              ) : (
-                <ul className="divide-y divide-[color:var(--line)]">
-                  {filteredSpecies.slice(0, 80).map((s) => {
-                    const group = taxonomyGroups.find((g) => g.id === s.groupId);
-                    return (
-                      <li key={s.id}>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setSpeciesId(s.id);
-                            setLocalAck(false);
-                          }}
-                          className={`flex w-full flex-col items-start px-4 py-3 text-left transition-colors hover:bg-white ${
-                            speciesId === s.id ? "bg-white" : ""
-                          }`}
-                        >
-                          <span className="font-semibold text-navy">{s.commonName}</span>
-                          <span className="text-sm italic text-muted">{s.scientificName}</span>
-                          <span className="mt-1 text-xs font-semibold text-muted">
-                            {group?.name}
-                            {s.tradeStatus === "local_only" ? " · Local stock only" : ""}
-                          </span>
-                        </button>
-                      </li>
-                    );
-                  })}
-                </ul>
-              )}
-            </div>
-            {selected ? (
-              <p className="rounded-xl bg-sand px-4 py-3 text-sm text-navy">
-                Selected: <span className="font-bold">{selected.commonName}</span>{" "}
-                <span className="italic text-muted">({selected.scientificName})</span>
-              </p>
+
+            {!speciesQuery.trim() && !groupFilter ? (
+              <div className="rounded-xl border border-dashed border-[color:var(--line)] bg-foam px-4 py-10 text-center text-sm text-muted">
+                Start typing a name or choose Rainbowfish / Australian Natives to see locality
+                forms (e.g. Banded Rainbowfish — Goyder River).
+              </div>
             ) : (
-              <p className="text-sm text-muted">Pick a species from the catalogue to continue.</p>
+              <div className="max-h-80 overflow-auto rounded-xl border border-[color:var(--line)] bg-foam">
+                {filteredSpecies.length === 0 ? (
+                  <p className="p-4 text-sm text-muted">No species match. Try another search.</p>
+                ) : (
+                  <ul className="divide-y divide-[color:var(--line)]">
+                    {filteredSpecies.map((s) => {
+                      const group = taxonomyGroups.find((g) => g.id === s.groupId);
+                      const active = speciesId === s.id;
+                      return (
+                        <li key={s.id}>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSpeciesId(s.id);
+                              setLocalAck(false);
+                              // If catalogue name already includes a locality, prefill editable field
+                              const dash = s.commonName.indexOf(" - ");
+                              setLocality(dash > 0 ? s.commonName.slice(dash + 3) : "");
+                            }}
+                            className={`flex w-full flex-col items-start px-4 py-3 text-left transition-colors ${
+                              active
+                                ? "border-l-4 border-l-orange bg-white"
+                                : "border-l-4 border-l-transparent hover:bg-white/70"
+                            }`}
+                          >
+                            <span className="font-semibold text-navy">{s.commonName}</span>
+                            <span className="text-sm italic text-muted">{s.scientificName}</span>
+                            <span className="mt-1 text-xs font-semibold text-muted">
+                              {group?.name}
+                              {s.tradeStatus === "local_only" ? " · Local stock only" : ""}
+                            </span>
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+              </div>
             )}
+
+            {selected ? (
+              <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-sand px-4 py-3 text-sm text-navy">
+                <p>
+                  Selected: <span className="font-bold">{selected.commonName}</span>{" "}
+                  <span className="italic text-muted">({selected.scientificName})</span>
+                </p>
+                <button
+                  type="button"
+                  className="font-semibold text-orange hover:underline"
+                  onClick={() => {
+                    setSpeciesId("");
+                    setLocalAck(false);
+                    setLocality("");
+                  }}
+                >
+                  Clear
+                </button>
+              </div>
+            ) : (
+              <p className="text-sm text-muted">No species selected yet.</p>
+            )}
+
             {selected?.tradeStatus === "local_only" ? (
               <div className="rounded-xl bg-warning/10 p-4 text-sm text-warning">
                 <p className="font-bold">Local stock only</p>
@@ -162,8 +230,7 @@ export default function NewListingPage() {
             ) : null}
             {selected?.tradeStatus === "prohibited" ? (
               <p className="rounded-xl bg-danger/10 p-4 text-sm text-danger">
-                This species is prohibited under Australian law and cannot be listed. See DAFF
-                resources.
+                This species is prohibited under Australian law and cannot be listed.
               </p>
             ) : null}
           </div>
@@ -171,6 +238,31 @@ export default function NewListingPage() {
 
         {step === 1 && (
           <div className="space-y-4">
+            <div className="rounded-xl bg-sand px-4 py-3 text-sm text-navy">
+              Listing as: <span className="font-bold">{listingTitle || selected?.commonName}</span>
+            </div>
+
+            <label className="block text-sm">
+              <span className="mb-1.5 block font-semibold text-navy">
+                Locality / river system / strain
+                {localityRequired ? " (required)" : " (optional)"}
+              </span>
+              <input
+                value={locality}
+                onChange={(e) => setLocality(e.target.value)}
+                placeholder={
+                  localityRequired
+                    ? "e.g. Goyder River, Flat Rock Creek, Wallaby Creek, captive strain"
+                    : "e.g. Long-fin, Albino, F1 wild-caught, river locality"
+                }
+                className="h-11 w-full rounded-lg border border-[color:var(--line)] bg-foam px-3 focus-ring"
+              />
+              <span className="mt-1 block text-xs text-muted">
+                Rainbowfish and blue-eyes are often sold by river / locality. This appears on the
+                listing title so buyers know exactly which form you have.
+              </span>
+            </label>
+
             <div className="flex gap-2">
               {(["for_sale", "rehoming"] as const).map((t) => (
                 <button
@@ -216,7 +308,7 @@ export default function NewListingPage() {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 className="w-full rounded-lg border border-[color:var(--line)] bg-foam px-3 py-2 focus-ring"
-                placeholder="Health, tank mates, pickup notes…"
+                placeholder="Health, tank mates, pickup notes, breeding line…"
               />
               <span className="text-xs text-muted">{description.length}/1000</span>
             </label>
@@ -252,7 +344,6 @@ export default function NewListingPage() {
                   ["diet", "Diet notes"],
                   ["tank", "Min tank litres"],
                   ["compatibility", "Compatibility"],
-                  ["strain", "Strain / variant"],
                   ["breeding", "Breeding notes"],
                 ] as const
               ).map(([key, label]) => (
@@ -275,9 +366,19 @@ export default function NewListingPage() {
             <h2 className="font-display text-xl font-bold text-navy">Review & publish</h2>
             <dl className="space-y-2 text-sm">
               <div className="flex justify-between gap-4">
-                <dt className="text-muted">Species</dt>
-                <dd className="font-semibold text-navy">{selected?.commonName}</dd>
+                <dt className="text-muted">Listing title</dt>
+                <dd className="text-right font-semibold text-navy">{listingTitle}</dd>
               </div>
+              <div className="flex justify-between gap-4">
+                <dt className="text-muted">Scientific</dt>
+                <dd className="italic text-muted">{selected?.scientificName}</dd>
+              </div>
+              {locality.trim() ? (
+                <div className="flex justify-between gap-4">
+                  <dt className="text-muted">Locality / strain</dt>
+                  <dd className="font-semibold text-navy">{locality}</dd>
+                </div>
+              ) : null}
               <div className="flex justify-between gap-4">
                 <dt className="text-muted">Type</dt>
                 <dd className="font-semibold text-navy">
@@ -297,7 +398,7 @@ export default function NewListingPage() {
             </dl>
             <p className="rounded-xl bg-sand px-4 py-3 text-sm text-muted">
               Demo mode: publishing would deduct one credit via the ledger and set status to
-              active. Zero credits triggers Stripe inline purchase.
+              active.
             </p>
             <ButtonLink href="/dashboard" variant="orange" className="w-full">
               Publish listing
@@ -318,7 +419,10 @@ export default function NewListingPage() {
             <Button
               type="button"
               variant="primary"
-              disabled={step === 0 && !canProceedSpecies}
+              className="text-white"
+              disabled={
+                (step === 0 && !canProceedSpecies) || (step === 1 && !canProceedDetails)
+              }
               onClick={() => setStep((s) => Math.min(3, s + 1))}
             >
               Continue
