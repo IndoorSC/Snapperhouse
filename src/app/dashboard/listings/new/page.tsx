@@ -1,7 +1,7 @@
 "use client";
 
 import { Badge, Button, ButtonLink } from "@/components/ui/primitives";
-import { species, taxonomyGroups } from "@/lib/data/taxonomy";
+import { searchSpeciesCatalogue, species, taxonomyGroups } from "@/lib/data/taxonomy";
 import { useMemo, useState } from "react";
 
 const steps = ["Species", "Details", "Extras", "Publish"] as const;
@@ -9,6 +9,8 @@ const steps = ["Species", "Details", "Extras", "Publish"] as const;
 export default function NewListingPage() {
   const [step, setStep] = useState(0);
   const [speciesId, setSpeciesId] = useState("");
+  const [speciesQuery, setSpeciesQuery] = useState("");
+  const [groupFilter, setGroupFilter] = useState("all");
   const [listingType, setListingType] = useState<"for_sale" | "rehoming">("for_sale");
   const [localAck, setLocalAck] = useState(false);
   const [quantity, setQuantity] = useState(1);
@@ -25,6 +27,14 @@ export default function NewListingPage() {
   });
 
   const selected = species.find((s) => s.id === speciesId);
+  const filteredSpecies = useMemo(() => {
+    let results = searchSpeciesCatalogue(speciesQuery);
+    if (groupFilter !== "all") {
+      results = results.filter((s) => s.groupId === groupFilter);
+    }
+    return results;
+  }, [speciesQuery, groupFilter]);
+
   const completeness = useMemo(() => {
     let score = 40;
     if (optional.gh) score += 5;
@@ -63,32 +73,78 @@ export default function NewListingPage() {
       <div className="mt-6 rounded-[1.5rem] bg-white p-6">
         {step === 0 && (
           <div className="space-y-4">
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-sm font-semibold text-navy">
+                Species catalogue · {species.filter((s) => s.approved).length} ready to list
+              </p>
+            </div>
             <label className="block text-sm">
               <span className="mb-1.5 block font-semibold text-navy">Search species</span>
+              <input
+                type="search"
+                value={speciesQuery}
+                onChange={(e) => setSpeciesQuery(e.target.value)}
+                placeholder="Type a common or scientific name — e.g. cory, neon, Apistogramma"
+                className="h-11 w-full rounded-lg border border-[color:var(--line)] bg-foam px-3 focus-ring"
+              />
+            </label>
+            <label className="block text-sm">
+              <span className="mb-1.5 block font-semibold text-navy">Or browse by group</span>
               <select
                 className="h-11 w-full rounded-lg border border-[color:var(--line)] bg-foam px-3 focus-ring"
-                value={speciesId}
-                onChange={(e) => {
-                  setSpeciesId(e.target.value);
-                  setLocalAck(false);
-                }}
+                value={groupFilter}
+                onChange={(e) => setGroupFilter(e.target.value)}
               >
-                <option value="">Select an approved species…</option>
+                <option value="all">All groups</option>
                 {taxonomyGroups
-                  .filter((g) => g.section === "fish")
+                  .filter((g) => g.section === "fish" || g.section === "plants")
                   .map((g) => (
-                    <optgroup key={g.id} label={g.name}>
-                      {species
-                        .filter((s) => s.groupId === g.id && s.approved)
-                        .map((s) => (
-                          <option key={s.id} value={s.id}>
-                            {s.commonName} ({s.scientificName})
-                          </option>
-                        ))}
-                    </optgroup>
+                    <option key={g.id} value={g.id}>
+                      {g.name}
+                    </option>
                   ))}
               </select>
             </label>
+            <div className="max-h-72 overflow-auto rounded-xl border border-[color:var(--line)] bg-foam">
+              {filteredSpecies.length === 0 ? (
+                <p className="p-4 text-sm text-muted">No species match that search. Try another name.</p>
+              ) : (
+                <ul className="divide-y divide-[color:var(--line)]">
+                  {filteredSpecies.slice(0, 80).map((s) => {
+                    const group = taxonomyGroups.find((g) => g.id === s.groupId);
+                    return (
+                      <li key={s.id}>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSpeciesId(s.id);
+                            setLocalAck(false);
+                          }}
+                          className={`flex w-full flex-col items-start px-4 py-3 text-left transition-colors hover:bg-white ${
+                            speciesId === s.id ? "bg-white" : ""
+                          }`}
+                        >
+                          <span className="font-semibold text-navy">{s.commonName}</span>
+                          <span className="text-sm italic text-muted">{s.scientificName}</span>
+                          <span className="mt-1 text-xs font-semibold text-muted">
+                            {group?.name}
+                            {s.tradeStatus === "local_only" ? " · Local stock only" : ""}
+                          </span>
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </div>
+            {selected ? (
+              <p className="rounded-xl bg-sand px-4 py-3 text-sm text-navy">
+                Selected: <span className="font-bold">{selected.commonName}</span>{" "}
+                <span className="italic text-muted">({selected.scientificName})</span>
+              </p>
+            ) : (
+              <p className="text-sm text-muted">Pick a species from the catalogue to continue.</p>
+            )}
             {selected?.tradeStatus === "local_only" ? (
               <div className="rounded-xl bg-warning/10 p-4 text-sm text-warning">
                 <p className="font-bold">Local stock only</p>
@@ -110,13 +166,6 @@ export default function NewListingPage() {
                 resources.
               </p>
             ) : null}
-            <p className="text-sm text-muted">
-              Can&apos;t find your species?{" "}
-              <button type="button" className="font-semibold text-orange hover:underline">
-                Suggest an addition
-              </button>{" "}
-              for admin review.
-            </p>
           </div>
         )}
 
