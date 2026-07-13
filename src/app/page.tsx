@@ -12,31 +12,21 @@ export default function HomePage() {
 
   return (
     <>
-      <section className="relative overflow-hidden water-bg text-white">
-        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(16,36,56,0.35)_0%,rgba(16,36,56,0.55)_55%,rgba(16,36,56,0.75)_100%)]" />
-        <div className="pointer-events-none absolute inset-0">
-          <div className="animate-float absolute -left-10 top-24 h-40 w-40 rounded-full bg-orange/15 blur-3xl" />
-          <div className="animate-float absolute bottom-10 right-10 h-56 w-56 rounded-full bg-water-light/20 blur-3xl [animation-delay:1s]" />
-        </div>
-        <div className="relative mx-auto max-w-7xl px-4 pb-20 pt-12 md:px-6 md:pb-24 md:pt-16">
+      <section className="relative overflow-hidden bg-white">
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-[linear-gradient(180deg,transparent,rgba(232,238,243,0.9))]" />
+        <div className="relative mx-auto max-w-7xl px-4 pb-16 pt-10 md:px-6 md:pb-20 md:pt-14">
           <div className="animate-rise mx-auto flex max-w-4xl flex-col items-center text-center">
             <Logo size="hero" className="w-full max-w-[34rem] sm:max-w-[40rem]" />
             <h1 className="sr-only">Snapperhouse — Your Site, Your Store</h1>
-            <p className="animate-rise-delay mx-auto mt-8 max-w-xl text-base font-medium leading-relaxed text-white drop-shadow-[0_1px_8px_rgba(16,36,56,0.65)] sm:text-lg md:text-xl">
+            <p className="animate-rise-delay mx-auto mt-8 max-w-xl text-base font-medium leading-relaxed text-navy sm:text-lg md:text-xl">
               Australia&apos;s aquarium marketplace for private hobbyists — species-driven
               listings, seller storefronts, and community tools Facebook can&apos;t offer.
             </p>
             <div className="animate-rise-delay-2 mt-8 flex flex-wrap justify-center gap-3">
               <ButtonLink href="/browse" variant="orange" size="lg">
                 Browse livestock
-                <ArrowRight className="h-4 w-4" />
               </ButtonLink>
-              <ButtonLink
-                href="/register"
-                variant="secondary"
-                size="lg"
-                className="border-transparent bg-white text-navy hover:bg-sand"
-              >
+              <ButtonLink href="/register" variant="primary" size="lg">
                 Start selling
               </ButtonLink>
             </div>
