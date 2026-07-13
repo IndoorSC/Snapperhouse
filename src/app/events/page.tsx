@@ -16,10 +16,10 @@ export default function EventsPage() {
           <Badge tone="orange" className="bg-orange text-white">
             Community events
           </Badge>
-          <h1 className="mt-4 max-w-2xl font-display text-4xl font-extrabold tracking-tight md:text-5xl">
+          <h1 className="mt-4 max-w-2xl font-display text-4xl font-extrabold tracking-tight text-white md:text-5xl">
             Snapperhouse Fish Trade Days
           </h1>
-          <p className="mt-4 max-w-xl text-lg text-white/75">
+          <p className="mt-4 max-w-xl text-lg text-white/85">
             Credits aren&apos;t just a listing fee — they help fund real-world hobbyist markets
             with seller tables, auctions, and bring-your-problem-fish corners.
           </p>

@@ -77,19 +77,25 @@ a {
 }
 
 .water-bg {
-  background:
+  background-color: #102438;
+  background-image:
     radial-gradient(ellipse 80% 60% at 15% 20%, rgba(61, 143, 173, 0.35), transparent 55%),
     radial-gradient(ellipse 70% 50% at 85% 10%, rgba(244, 123, 32, 0.18), transparent 50%),
     radial-gradient(ellipse 90% 70% at 50% 100%, rgba(16, 36, 56, 0.55), transparent 60%),
     linear-gradient(165deg, #102438 0%, #1b3a5c 42%, #244a70 72%, #2a6f8f 100%);
 }
 
-.ripple {
+/* Pattern overlay — must not replace .water-bg gradients (background-image alone would). */
+.water-bg.ripple {
   background-image:
-    radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.06) 0 1px, transparent 2px),
+    radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.07) 0 1px, transparent 2px),
     radial-gradient(circle at 70% 60%, rgba(255, 255, 255, 0.05) 0 1px, transparent 2px),
-    radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.04) 0 1px, transparent 2px);
-  background-size: 48px 48px, 72px 72px, 56px 56px;
+    radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.04) 0 1px, transparent 2px),
+    radial-gradient(ellipse 80% 60% at 15% 20%, rgba(61, 143, 173, 0.35), transparent 55%),
+    radial-gradient(ellipse 70% 50% at 85% 10%, rgba(244, 123, 32, 0.18), transparent 50%),
+    radial-gradient(ellipse 90% 70% at 50% 100%, rgba(16, 36, 56, 0.55), transparent 60%),
+    linear-gradient(165deg, #102438 0%, #1b3a5c 42%, #244a70 72%, #2a6f8f 100%);
+  background-size: 48px 48px, 72px 72px, 56px 56px, auto, auto, auto, auto;
 }
 
 .surface-panel {
