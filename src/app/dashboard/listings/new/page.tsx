@@ -6,11 +6,29 @@ import { useMemo, useState } from "react";
 
 const steps = ["Species", "Details", "Extras", "Publish"] as const;
 
-function needsLocality(groupId?: string, commonName?: string) {
+function needsFormDetail(groupId?: string, commonName?: string) {
   if (!groupId) return false;
-  if (groupId === "g-rainbowfish" || groupId === "g-aus-natives") return true;
+  const morphGroups = new Set([
+    "g-rainbowfish",
+    "g-aus-natives",
+    "g-discus",
+    "g-angelfish",
+    "g-bettas",
+    "g-goldfish",
+    "g-cichlids",
+  ]);
+  if (morphGroups.has(groupId)) return true;
   const name = (commonName ?? "").toLowerCase();
-  return name.includes("rainbow") || name.includes("blue-eye") || name.includes("blue eye");
+  return (
+    name.includes("rainbow") ||
+    name.includes("blue-eye") ||
+    name.includes("blue eye") ||
+    name.includes("discus") ||
+    name.includes("angel") ||
+    name.includes("oscar") ||
+    name.includes("ramirezi") ||
+    name.includes("betta")
+  );
 }
 
 export default function NewListingPage() {
@@ -34,7 +52,7 @@ export default function NewListingPage() {
   });
 
   const selected = species.find((s) => s.id === speciesId);
-  const localityRequired = needsLocality(selected?.groupId, selected?.commonName);
+  const localityRequired = needsFormDetail(selected?.groupId, selected?.commonName);
 
   const filteredSpecies = useMemo(() => {
     // Don't dump the full catalogue — require search or group so nothing looks pre-picked
@@ -79,8 +97,9 @@ export default function NewListingPage() {
     <div className="mx-auto max-w-3xl px-4 py-10 md:px-6">
       <h1 className="font-display text-3xl font-extrabold text-navy">Create listing</h1>
       <p className="mt-2 text-muted">
-        Fish & livestock — 1 credit on publish. For rainbowfish and blue-eyes, choose the
-        locality / river form that matches what you are selling.
+        Fish & livestock — 1 credit on publish. For discus, angelfish, rainbows, blue-eyes,
+        bettas, goldfish and many cichlids, pick the exact form and confirm variety / morph /
+        locality on the next step.
       </p>
 
       <div className="mt-6 flex gap-2">
@@ -147,8 +166,8 @@ export default function NewListingPage() {
 
             {!speciesQuery.trim() && !groupFilter ? (
               <div className="rounded-xl border border-dashed border-[color:var(--line)] bg-foam px-4 py-10 text-center text-sm text-muted">
-                Start typing a name or choose Rainbowfish / Australian Natives to see locality
-                forms (e.g. Banded Rainbowfish — Goyder River).
+                Start typing a name or choose a group (Discus, Angelfish, Rainbowfish, Bettas,
+                Goldfish & Koi) to see named forms.
               </div>
             ) : (
               <div className="max-h-80 overflow-auto rounded-xl border border-[color:var(--line)] bg-foam">
@@ -244,7 +263,7 @@ export default function NewListingPage() {
 
             <label className="block text-sm">
               <span className="mb-1.5 block font-semibold text-navy">
-                Locality / river system / strain
+                Variety / morph / locality / strain
                 {localityRequired ? " (required)" : " (optional)"}
               </span>
               <input
@@ -252,14 +271,14 @@ export default function NewListingPage() {
                 onChange={(e) => setLocality(e.target.value)}
                 placeholder={
                   localityRequired
-                    ? "e.g. Goyder River, Flat Rock Creek, Wallaby Creek, captive strain"
-                    : "e.g. Long-fin, Albino, F1 wild-caught, river locality"
+                    ? "e.g. Blue Diamond, Koi Angel, Goyder River, Halfmoon Copper, Oranda Red Cap"
+                    : "e.g. Long-fin, Albino, F1 wild-caught"
                 }
                 className="h-11 w-full rounded-lg border border-[color:var(--line)] bg-foam px-3 focus-ring"
               />
               <span className="mt-1 block text-xs text-muted">
-                Rainbowfish and blue-eyes are often sold by river / locality. This appears on the
-                listing title so buyers know exactly which form you have.
+                Wholesaler and shop lists often sell by morph or river form. This becomes part of
+                your public listing title so buyers know exactly which type you have.
               </span>
             </label>
 
