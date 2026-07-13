@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 560" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="800" y2="560" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#102438"/>
+      <stop offset="0.55" stop-color="#1B3A5C"/>
+      <stop offset="1" stop-color="#2A6F8F"/>
+    </linearGradient>
+    <linearGradient id="fish" x1="180" y1="200" x2="640" y2="360" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#3D8FAD"/>
+      <stop offset="0.55" stop-color="#F47B20"/>
+      <stop offset="1" stop-color="#FF8F3A"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="560" fill="url(#bg)"/>
+  <circle cx="120" cy="90" r="40" fill="#ffffff" fill-opacity="0.05"/>
+  <circle cx="680" cy="120" r="70" fill="#ffffff" fill-opacity="0.04"/>
+  <circle cx="700" cy="420" r="90" fill="#F47B20" fill-opacity="0.12"/>
+  <path d="M160 300C210 210 320 180 420 210C520 240 600 220 660 250C580 280 560 330 470 350C360 375 250 370 190 340C170 330 155 320 160 300Z" fill="url(#fish)" fill-opacity="0.9"/>
+  <path d="M160 300C145 275 120 265 95 275C125 295 135 320 145 335C155 325 160 312 160 300Z" fill="#F47B20"/>
+  <circle cx="560" cy="245" r="10" fill="#102438"/>
+  <circle cx="563" cy="242" r="3" fill="#fff"/>
+  <path d="M120 430H680" stroke="#ffffff" stroke-opacity="0.08" stroke-width="2"/>
+  <text x="40" y="520" fill="#ffffff" fill-opacity="0.35" font-family="system-ui,sans-serif" font-size="22">cardinal</text>
+</svg>
