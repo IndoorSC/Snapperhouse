@@ -26,7 +26,7 @@ export default function HomePage() {
               <ButtonLink href="/browse" variant="orange" size="lg">
                 Browse livestock
               </ButtonLink>
-              <ButtonLink href="/register" variant="primary" size="lg">
+              <ButtonLink href="/register" variant="primary" size="lg" className="text-white">
                 Start selling
               </ButtonLink>
             </div>
