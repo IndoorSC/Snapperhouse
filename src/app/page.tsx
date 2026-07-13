@@ -1,3 +1,4 @@
+import { Logo } from "@/components/layout/Logo";
 import { ListingGrid } from "@/components/listings/ListingCard";
 import { Badge, ButtonLink, SectionHeading } from "@/components/ui/primitives";
 import { getEnrichedListings, sortListings } from "@/lib/data";
@@ -16,19 +17,17 @@ export default function HomePage() {
           <div className="animate-float absolute -left-10 top-24 h-40 w-40 rounded-full bg-orange/20 blur-3xl" />
           <div className="animate-float absolute bottom-10 right-10 h-56 w-56 rounded-full bg-water-light/30 blur-3xl [animation-delay:1s]" />
         </div>
-        <div className="relative mx-auto grid max-w-7xl gap-10 px-4 pb-20 pt-16 md:grid-cols-[1.15fr_0.85fr] md:px-6 md:pb-24 md:pt-24">
-          <div>
-            <p className="animate-rise mb-4 font-display text-4xl font-extrabold tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl">
-              Snapper<span className="text-orange">house</span>
-            </p>
-            <h1 className="animate-rise-delay max-w-xl font-display text-2xl font-semibold leading-snug text-white/95 sm:text-3xl md:text-4xl">
-              Your Site, Your Store
-            </h1>
-            <p className="animate-rise-delay-2 mt-5 max-w-lg text-base leading-relaxed text-white/75 sm:text-lg">
+        <div className="relative mx-auto max-w-7xl px-4 pb-20 pt-14 md:px-6 md:pb-24 md:pt-20">
+          <div className="animate-rise mx-auto max-w-3xl text-center">
+            <div className="mx-auto inline-flex rounded-2xl bg-white px-5 py-4 shadow-[0_20px_50px_rgba(16,36,56,0.35)] sm:px-8 sm:py-5">
+              <Logo size="hero" withTagline />
+            </div>
+            <h1 className="sr-only">Snapperhouse — Your Site, Your Store</h1>
+            <p className="animate-rise-delay mx-auto mt-8 max-w-xl text-base leading-relaxed text-white/80 sm:text-lg">
               Australia&apos;s aquarium marketplace for private hobbyists — species-driven
               listings, seller storefronts, and community tools Facebook can&apos;t offer.
             </p>
-            <div className="animate-rise-delay-2 mt-8 flex flex-wrap gap-3">
+            <div className="animate-rise-delay-2 mt-8 flex flex-wrap justify-center gap-3">
               <ButtonLink href="/browse" variant="orange" size="lg">
                 Browse livestock
                 <ArrowRight className="h-4 w-4" />
@@ -41,48 +40,6 @@ export default function HomePage() {
               >
                 Start selling
               </ButtonLink>
-            </div>
-          </div>
-
-          <div className="animate-rise-delay relative hidden min-h-[320px] md:block">
-            <div className="absolute inset-0 rounded-[2rem] border border-white/10 bg-white/5 backdrop-blur-sm" />
-            <svg
-              viewBox="0 0 480 420"
-              className="absolute inset-0 h-full w-full p-6"
-              aria-hidden
-            >
-              <defs>
-                <linearGradient id="heroFish" x1="0" y1="0" x2="1" y2="1">
-                  <stop stopColor="#3D8FAD" />
-                  <stop offset="0.5" stopColor="#F47B20" />
-                  <stop offset="1" stopColor="#FF8F3A" />
-                </linearGradient>
-              </defs>
-              <g className="animate-swim origin-center">
-                <path
-                  d="M60 210C120 120 220 100 300 140C380 180 420 160 460 200C400 240 380 300 300 320C200 345 120 320 80 280C65 260 55 235 60 210Z"
-                  fill="url(#heroFish)"
-                  opacity="0.95"
-                />
-                <path
-                  d="M60 210C40 175 15 165 0 180C30 210 35 250 45 280C55 255 60 230 60 210Z"
-                  fill="#F47B20"
-                />
-                <circle cx="360" cy="175" r="12" fill="#102438" />
-                <circle cx="364" cy="171" r="4" fill="white" />
-              </g>
-              <circle cx="90" cy="80" r="18" fill="white" opacity="0.08" />
-              <circle cx="140" cy="110" r="8" fill="white" opacity="0.1" />
-              <circle cx="400" cy="70" r="28" fill="white" opacity="0.06" />
-            </svg>
-            <div className="absolute bottom-6 left-6 right-6 rounded-2xl bg-navy-deep/70 p-4 backdrop-blur">
-              <p className="text-xs font-bold uppercase tracking-[0.16em] text-orange">
-                Built by hobbyists
-              </p>
-              <p className="mt-1 text-sm text-white/85">
-                Taxonomy, ratings, tax awareness, and Fish Trade Days — not just another
-                classifieds board.
-              </p>
             </div>
           </div>
         </div>
